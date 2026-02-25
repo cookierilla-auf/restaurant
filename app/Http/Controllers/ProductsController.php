@@ -29,9 +29,15 @@ class ProductsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
-        $products = Products::create($request->validated());
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+        ]);
+
+        $products = Products::create($validated);
 
         return response()->json($products, 201);
     }
@@ -39,9 +45,9 @@ class ProductsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Products $products): JsonResponse
+    public function show(Products $product): JsonResponse
     {
-        return response()->json($products, 200);
+        return response()->json($product, 200);
     }
 
     /**
@@ -55,7 +61,7 @@ class ProductsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Products $products): JsonResponse
+    public function update(Request $request, Products $product): JsonResponse
     {
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
@@ -63,17 +69,17 @@ class ProductsController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $products->update($validated);
+        $product->update($validated);
 
-        return response()->json($products, 200);
+        return response()->json($product, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Products $products): JsonResponse
+    public function destroy(Products $product): JsonResponse
     {
-        $products->delete();
+        $product->delete();
 
         return response()->json([
             'message' => 'Product deleted successfully'

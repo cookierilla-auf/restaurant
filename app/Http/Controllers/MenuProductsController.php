@@ -29,6 +29,10 @@ class MenuProductsController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $validated = $request->validate([
+            'menu_id' => 'required|integer|exists:menus,id',
+            'product_id' => 'required|integer|exists:products,id',
+        ]);
 
         $menuProducts = MenuProducts::create($validated);
 
@@ -38,9 +42,9 @@ class MenuProductsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(MenuProducts $menuProducts): JsonResponse
+    public function show(MenuProducts $menuproduct): JsonResponse
     {
-        return response()->json($menuProducts, 200);
+        return response()->json($menuproduct, 200);
     }
 
     /**
@@ -54,17 +58,27 @@ class MenuProductsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, MenuProducts $menuProducts)
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, MenuProducts $menuproduct): JsonResponse
     {
-        //
+        $validated = $request->validate([
+            'menu_id' => 'sometimes|required|integer|exists:menus,id',
+            'product_id' => 'sometimes|required|integer|exists:products,id',
+        ]);
+
+        $menuproduct->update($validated);
+
+        return response()->json($menuproduct, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MenuProducts $menuProducts): JsonResponse
+    public function destroy(MenuProducts $menuproduct): JsonResponse
     {
-        $menuProducts->delete();
+        $menuproduct->delete();
 
         return response()->json([
             'message' => 'Menu product deleted successfully'

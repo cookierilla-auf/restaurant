@@ -29,6 +29,11 @@ class MenusController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
         $menus = Menus::create($validated);
 
         return response()->json($menus, 201);
@@ -37,9 +42,9 @@ class MenusController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Menus $menus): JsonResponse
+    public function show(Menus $menu): JsonResponse
     {
-        return response()->json($menus, 200);
+        return response()->json($menu, 200);
     }
 
 
@@ -54,24 +59,24 @@ class MenusController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Menus $menus): JsonResponse
+    public function update(Request $request, Menus $menu): JsonResponse
     {
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
         ]);
 
-        $menus->update($validated);
+        $menu->update($validated);
 
-        return response()->json($menus, 200);
+        return response()->json($menu, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Menus $menus): JsonResponse
+    public function destroy(Menus $menu): JsonResponse
     {
-        $menus->delete();
+        $menu->delete();
 
         return response()->json([
             'message' => 'Menu deleted successfully'
