@@ -26,7 +26,6 @@ class UpdateProductRequest extends FormRequest
         return [
             'name' => 'sometimes|required|filled|string|max:255|min:1|unique:products,name,' . $productId . ',id',
             'price' => 'sometimes|required|filled|numeric|min:0',
-            'description' => 'nullable|string',
             'image_path' => 'nullable|string',
         ];
     }
@@ -48,7 +47,6 @@ class UpdateProductRequest extends FormRequest
             'price.filled' => 'You cannot leave the price blank. The price field is required.',
             'price.numeric' => 'The price must be a numeric value.',
             'price.min' => 'The price must be at least 0.',
-            'description.string' => 'The description must be a string.',
             'image_path.string' => 'The image path must be a string.',
         ];
     }
