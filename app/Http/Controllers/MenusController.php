@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Menus;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\StoreMenuRequest;
+use App\Http\Requests\UpdateMenuRequest;
 
 class MenusController extends Controller
 {
@@ -27,14 +29,9 @@ class MenusController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreMenuRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
-
-        $menus = Menus::create($validated);
+        $menus = Menus::create($request->validated());
 
         return response()->json($menus, 201);
     }
@@ -59,16 +56,13 @@ class MenusController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Menus $menu): JsonResponse
+    public function update(UpdateMenuRequest $request, Menus $menu): JsonResponse
     {
-        $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
-
+        $validated = $request->validated();
         $menu->update($validated);
+        $menu->refresh();
 
-        return response()->json($menu, 200);
+        return response()->json(['message' => 'Menu updated successfully', 'data' => $menu], 200);
     }
 
     /**

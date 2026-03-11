@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 
 
 class ProductsController extends Controller
@@ -29,17 +30,12 @@ class ProductsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreProductRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
-            'description' => 'nullable|string',
-        ]);
+        $validated = $request->validated();
+        $product = Products::create($validated);
 
-        $products = Products::create($validated);
-
-        return response()->json($products, 201);
+        return response()->json($product, 201);
     }
 
     /**
@@ -61,17 +57,13 @@ class ProductsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Products $product): JsonResponse
+    public function update(UpdateProductRequest $request, Products $product): JsonResponse
     {
-        $validated = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'price' => 'sometimes|required|numeric|min:0',
-            'description' => 'nullable|string',
-        ]);
-
+        $validated = $request->validated();
         $product->update($validated);
+        $product->refresh();
 
-        return response()->json($product, 200);
+        return response()->json(['message' => 'Product updated successfully', 'data' => $product], 200);
     }
 
     /**

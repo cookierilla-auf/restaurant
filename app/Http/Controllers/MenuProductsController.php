@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\MenuProducts;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use App\Http\Requests\StoreMenuProductsRequest;
+use App\Http\Requests\UpdateMenuProductRequest;
 
 class MenuProductsController extends Controller
 {
@@ -27,14 +29,9 @@ class MenuProductsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreMenuProductsRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'menu_id' => 'required|integer|exists:menus,id',
-            'product_id' => 'required|integer|exists:products,id',
-        ]);
-
-        $menuProducts = MenuProducts::create($validated);
+        $menuProducts = MenuProducts::create($request->validated());
 
         return response()->json($menuProducts, 201);
     }
@@ -58,19 +55,13 @@ class MenuProductsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, MenuProducts $menuproduct): JsonResponse
+    public function update(UpdateMenuProductRequest $request, MenuProducts $menuproduct): JsonResponse
     {
-        $validated = $request->validate([
-            'menu_id' => 'sometimes|required|integer|exists:menus,id',
-            'product_id' => 'sometimes|required|integer|exists:products,id',
-        ]);
-
+        $validated = $request->validated();
         $menuproduct->update($validated);
+        $menuproduct->refresh();
 
-        return response()->json($menuproduct, 200);
+        return response()->json(['message' => 'Menu product updated successfully', 'data' => $menuproduct], 200);
     }
 
     /**

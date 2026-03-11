@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id()->primary();
             $table->string('name', 128)->unique();
             $table->decimal('price', 5, 2);
+            $table->text('description')->nullable();
             $table->string('image_path', 255)->nullable();
             $table->timestamps();
             $table->softDeletes();
